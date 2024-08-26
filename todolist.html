@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>To-Do List</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #343a40;
+      color: #ffffff;
+    }
+    .list-group-item {
+      background-color: #495057;
+      color: #ffffff;
+    }
+    .btn-primary, .btn-danger, .btn-warning, .btn-success {
+      color: #ffffff;
+    }
+  </style>
+</head>
+<body>
+  <div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h1 class="text-center">To-Do List</h1>
+      <button class="btn btn-secondary" onclick="window.location.href='index.html'">Go Back</button>
+    </div>
+    <div class="input-group mb-3">
+      <input type="text" id="taskInput" class="form-control" placeholder="Enter a new task">
+      <div class="input-group-append">
+        <button class="btn btn-primary" type="button" id="addTaskButton">Add Task</button>
+      </div>
+    </div>
+    <ul class="list-group" id="taskList"></ul>
+    <button class="btn btn-danger mt-3" type="button" id="deleteSelectedButton" style="display: none;">Delete Selected</button>
+  </div>
+
+  <script>
+    function updateDeleteSelectedButtonVisibility() {
+      const taskList = document.getElementById('taskList');
+      const deleteSelectedButton = document.getElementById('deleteSelectedButton');
+      if (taskList.children.length > 0) {
+        deleteSelectedButton.style.display = 'block';
+      } else {
+        deleteSelectedButton.style.display = 'none';
+      }
+    }
+
+    document.getElementById('addTaskButton').addEventListener('click', function() {
+      const taskInput = document.getElementById('taskInput');
+      const taskText = taskInput.value.trim();
+      if (taskText !== '') {
+        const taskList = document.getElementById('taskList');
+        const listItem = document.createElement('li');
+        listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+        
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'mr-2';
+
+        const taskTextElement = document.createElement('span');
+        taskTextElement.textContent = taskText;
+
+        const buttonGroup = document.createElement('div');
+        buttonGroup.className = 'btn-group';
+
+        const editButton = document.createElement('button');
+        editButton.className = 'btn btn-warning btn-sm';
+        editButton.innerHTML = '<i class="fas fa-edit"></i>';
+        editButton.addEventListener('click', function() {
+          taskTextElement.contentEditable = true;
+          taskTextElement.focus();
+          editButton.style.display = 'none';
+          confirmButton.style.display = 'inline-block';
+        });
+
+        const confirmButton = document.createElement('button');
+        confirmButton.className = 'btn btn-success btn-sm';
+        confirmButton.innerHTML = '<i class="fas fa-check"></i>';
+        confirmButton.style.display = 'none';
+        confirmButton.addEventListener('click', function() {
+          taskTextElement.contentEditable = false;
+          confirmButton.style.display = 'none';
+          editButton.style.display = 'inline-block';
+        });
+
+        const deleteButton = document.createElement('button');
+        deleteButton.className = 'btn btn-danger btn-sm';
+        deleteButton.textContent = 'Delete';
+        deleteButton.addEventListener('click', function() {
+          taskList.removeChild(listItem);
+          updateDeleteSelectedButtonVisibility();
+        });
+
+        buttonGroup.appendChild(editButton);
+        buttonGroup.appendChild(confirmButton);
+        buttonGroup.appendChild(deleteButton);
+
+        listItem.appendChild(checkbox);
+        listItem.appendChild(taskTextElement);
+        listItem.appendChild(buttonGroup);
+        taskList.appendChild(listItem);
+        taskInput.value = '';
+        updateDeleteSelectedButtonVisibility();
+      }
+    });
+
+    document.getElementById('deleteSelectedButton').addEventListener('click', function() {
+      const taskList = document.getElementById('taskList');
+      const tasks = taskList.getElementsByTagName('li');
+      for (let i = tasks.length - 1; i >= 0; i--) {
+        const task = tasks[i];
+        const checkbox = task.getElementsByTagName('input')[0];
+        if (checkbox.checked) {
+          taskList.removeChild(task);
+        }
+      }
+      updateDeleteSelectedButtonVisibility();
+    });
+  </script>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
